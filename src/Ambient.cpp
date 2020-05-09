@@ -107,7 +107,6 @@ Ambient::send() {
 
     char str[180];
     char body[192];
-    char inChar;
 
     memset(body, 0, sizeof(body));
     strcat(body, "{\"writeKey\":\"");
@@ -153,7 +152,10 @@ Ambient::send() {
     }
 
     while (this->client->available()) {
-        inChar = this->client->read();
+        int inChar = this->client->read();
+        if (inChar < 0) {
+            break;
+        }
 #if AMBIENT_DEBUG
         Serial.write(inChar);
 #endif
@@ -185,7 +187,6 @@ Ambient::bulk_send(char *buf) {
     }
 
     char str[180];
-    char inChar;
 
     memset(str, 0, sizeof(str));
     sprintf(str, "POST /api/v2/channels/%d/dataarray HTTP/1.1\r\n", this->channelId);
@@ -226,7 +227,10 @@ Ambient::bulk_send(char *buf) {
     delay(500);
 
     while (this->client->available()) {
-        inChar = this->client->read();
+        int inChar = this->client->read();
+        if (inChar < 0) {
+            break;
+        }
 #if AMBIENT_DEBUG
         Serial.write(inChar);
 #endif
@@ -257,7 +261,6 @@ Ambient::delete_data(const char * userKey) {
     }
 
     char str[180];
-    char inChar;
 
     memset(str, 0, sizeof(str));
     sprintf(str, "DELETE /api/v2/channels/%d/data?userKey=%s HTTP/1.1\r\n", this->channelId, userKey);
@@ -280,7 +283,10 @@ Ambient::delete_data(const char * userKey) {
     }
 
     while (this->client->available()) {
-        inChar = this->client->read();
+        int inChar = this->client->read();
+        if (inChar < 0) {
+            break;
+        }
 #if AMBIENT_DEBUG
         Serial.write(inChar);
 #endif
@@ -325,7 +331,6 @@ Ambient::getchannel(const char * userKey, const char * devKey, unsigned int & ch
     }
 
     char str[1024];
-    char inChar;
 
     memset(str, 0, sizeof(str));
     sprintf(str, "GET /api/v2/channels/?userKey=%s&devKey=%s HTTP/1.1\r\n", userKey, devKey);
